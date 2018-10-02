@@ -20,6 +20,7 @@ int main()
 
   cout << "Enter Target to Be Searched For: ";
   getline(cin, target, '\n');
+  target = build_regex(target);
 
   ifstream fileIn;
   fileIn.open(DATA_FILE);
