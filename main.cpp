@@ -4,19 +4,23 @@
 #include <mutex>
 #include <deque>
 #include <regex>
+#include "functions.h"
 
 using namespace std;
 
 const string  DATA_FILE = "files.dat";
 
-int read_file(string &str, string &target);  //Rename to file_search()
+void read_file(string str, string &target, ProtectedQueue<int> & log);  //Rename to file_search()
 
 int main()
 {
-  deque<string> fileQueue;       //Queue to hold the filenames from the DATA_FILE
+  ProtectedQueue<string> fileQueue;       //Queue to hold the filenames from the DATA_FILE
   string fileName;               //Temporary string to hold name of a single file from DATA_FILE
   string target;                 //Target string to be searched for within text files.
   int wordCount = 0;
+  int numLogs = 0;
+  int threadCount = 0;
+  ProtectedQueue<int> wordLog;
 
   cout << "Enter Target to Be Searched For: ";
   getline(cin, target, '\n');
@@ -26,27 +30,36 @@ int main()
 
   //Populate the file queue from the DATA_FILE
   while(getline(fileIn, fileName, '\n')){
-    fileQueue.push_back(fileName);
+   // fileQueue.push(fileName);
   }
 
-  if(!fileQueue.empty())
-    cout << "Got files in Queue" << endl;
-  else 
-    cout << "Nothing in Queue" << endl;
-
-  //Output test
-  for(string str : fileQueue){
-    cout << str << endl;
+  numLogs = fileQueue.size();
+ 
+  /*
+  vector<thread *> activeThreads;
+  for(string s : fileQueue){
+    if(threadCount < 4){
+      thread * temp_t = new thread(read_file, ref(s), ref(target), ref(wordLog));
+      activeThreads.push_back(temp_t);
+    }
   }
+  */
 
+  thread * t_1 = new thread(read_file, fileQueue.front(), ref(target), ref(wordLog));
+  
+  /*
   //Seach Files for instances of target.
   for(string s : fileQueue){
     wordCount += read_file(s, target);
   }
-
+  */
   //read_file(fileQueue.front(), target);
 
+  wordCount = reducer(wordLog, 2);
   cout << "Total Word Count for " << target << " is: " << wordCount << endl;
+
+  t_1->join();
+  delete t_1;
 
   fileIn.close();
   /*	
@@ -69,8 +82,10 @@ int main()
   return 0;
 }
 
-int read_file(string &str, string &target)
+void read_file(string str, string &target, ProtectedQueue<int> & log)
 {
+  cerr << "CALLED WITH: " << str << endl;
+
   string line_in;
   int count = 0;
 
@@ -84,8 +99,8 @@ int read_file(string &str, string &target)
       regex_search(line_in, t_match, t_find);
       count += t_match.size();
   }
-
-  return count;
+  
+ // log.push(count);
 
   fin.close();
 }
