@@ -31,21 +31,21 @@ int main()
 
   numLogs = fileQueue.size();
 
-  thread * t_1 = new thread(mapper, ref(fileQueue), ref(wordLog), target);
+  //thread * t_1 = new thread(mapper, ref(fileQueue), ref(wordLog), target);
+  mapper(fileQueue, wordLog, target);
   
   /*
-  //Seach Files for instances of target.
-  for(string s : fileQueue){
-    wordCount += read_file(s, target);
+  int size = fileQueue.size();
+  for(int i = 0; i < size; i++){
+    read_file(fileQueue.pop(), target, wordLog);
   }
   */
-  //read_file(fileQueue.front(), target, wordLog);
-
-  wordCount = reducer(wordLog, 2);
+ 
+  wordCount = reducer(wordLog, numLogs);
   cout << "Total Word Count for " << target << " is: " << wordCount << endl;
-
-  t_1->join();
-  delete t_1;
+  
+  //t_1->join();
+  //delete t_1;
 
   fileIn.close();
   /*	

@@ -1,4 +1,5 @@
 #include "functions.h"
+#include <iostream>
 
 int reducer(ProtectedQueue<int> & wLog, int numLogs)
 {
@@ -21,9 +22,10 @@ void mapper(ProtectedQueue<string> & fQueue, ProtectedQueue<int> & log, string t
   int w_count;
   mutex q_lock;
 
-  while(fQueue.size() > 1){
+  while(fQueue.size() > 0){
    try{
      file = fQueue.pop();
+     cout << file << endl;
      w_count = get_word_count(file, target);
      log.push(w_count);
    }
