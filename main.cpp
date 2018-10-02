@@ -1,9 +1,5 @@
 #include <iostream>
-#include <fstream>
 #include <thread>
-#include <mutex>
-#include <deque>
-#include <regex>
 #include "functions.h"
 
 using namespace std;
@@ -30,22 +26,12 @@ int main()
 
   //Populate the file queue from the DATA_FILE
   while(getline(fileIn, fileName, '\n')){
-   // fileQueue.push(fileName);
+    fileQueue.push(fileName);
   }
 
   numLogs = fileQueue.size();
- 
-  /*
-  vector<thread *> activeThreads;
-  for(string s : fileQueue){
-    if(threadCount < 4){
-      thread * temp_t = new thread(read_file, ref(s), ref(target), ref(wordLog));
-      activeThreads.push_back(temp_t);
-    }
-  }
-  */
 
-  thread * t_1 = new thread(read_file, fileQueue.front(), ref(target), ref(wordLog));
+  thread * t_1 = new thread(mapper, ref(fileQueue), ref(wordLog), target);
   
   /*
   //Seach Files for instances of target.
@@ -53,7 +39,7 @@ int main()
     wordCount += read_file(s, target);
   }
   */
-  //read_file(fileQueue.front(), target);
+  //read_file(fileQueue.front(), target, wordLog);
 
   wordCount = reducer(wordLog, 2);
   cout << "Total Word Count for " << target << " is: " << wordCount << endl;
