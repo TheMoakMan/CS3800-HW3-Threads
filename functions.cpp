@@ -41,18 +41,8 @@ int get_word_count(string & str, string & tgt)
   ifstream fin;
   fin.open(str);
 
-  /*
-  smatch t_match;
-  regex t_find(tgt);
-
   while(getline(fin, line_in, '\n')){
-    regex_search(line_in, t_match, t_find);
-    count += t_match.size();
-  }
-  */
-
-  while(getline(fin, line_in, '\n')){
-    count += vector_word_count(str, tgt);
+    count += vector_word_count(line_in, tgt);
   }
 
   return count;
@@ -60,19 +50,22 @@ int get_word_count(string & str, string & tgt)
 
 int vector_word_count(string & source, string & substr)
 {
-  vector<size_t> occurances;
-  size_t pos = source.find(substr);
+  int count = 0;
+  size_t pos = source.find(substr, 0);
 
-  while(pos != string::npos){
-    occurances.push_back(pos);
+  while(pos != std::string::npos){
+    count++;
     pos = source.find(substr, pos + substr.size());
   }
   
-  return occurances.size();
+  return count;
 }
-string build_regex(string & target)
+
+string make_valid(string & target)
 {
-  string new_target;
+  string new_target = " ";
+  new_target.append(target);
+  new_target.append(" ");
 
   return new_target;
 }

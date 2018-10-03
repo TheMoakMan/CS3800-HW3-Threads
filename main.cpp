@@ -20,7 +20,7 @@ int main()
 
   cout << "Enter Target to Be Searched For: ";
   getline(cin, target, '\n');
-  target = build_regex(target);
+  target = make_valid(target);
 
   ifstream fileIn;
   fileIn.open(DATA_FILE);
@@ -30,21 +30,28 @@ int main()
     fileQueue.push(fileName);
   }
 
+  thread * threadLog[4];
+
   numLogs = fileQueue.size();
+  if(numLogs > 0 && numLogs < 4){
+    thread * threadLog = new thread[numLogs](mapper, ref(fileQueue), ref(wordLog), target);
+  }
+  else{
+    thread * threadLog = new thread[4](mapper, ref(fileQueue), ref(wordLog), target);
+  }
 
   //thread * t_1 = new thread(mapper, ref(fileQueue), ref(wordLog), target);
-  mapper(fileQueue, wordLog, target);
+  //mapper(fileQueue, wordLog, target);
   
-  /*
-  int size = fileQueue.size();
-  for(int i = 0; i < size; i++){
-    read_file(fileQueue.pop(), target, wordLog);
-  }
-  */
- 
   wordCount = reducer(wordLog, numLogs);
   cout << "Total Word Count for " << target << " is: " << wordCount << endl;
   
+  for(int i = 0; i < numLogs; i++;){
+    threadLog[i]->join();
+  }
+  
+  delete[]  threadLog;
+
   //t_1->join();
   //delete t_1;
 
