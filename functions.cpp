@@ -26,29 +26,29 @@ void mapper(ProtectedQueue<string> & fQueue, ProtectedQueue<int> & log, string t
    try{
      file = fQueue.pop();
      w_count = get_word_count(file, target);
-     cout << file << ":" << w_count << endl;
      log.push(w_count);
    }
    catch(...){}
   }
 }
 
-int get_word_count(string & str, string & tgt)
+int get_word_count(string & fName, string & tgt)
 {
   string line_in;
   int count = 0;
 
   ifstream fin;
-  fin.open(str);
+  fin.open(fName);
 
   while(getline(fin, line_in, '\n')){
-    count += vector_word_count(line_in, tgt);
+    count += substr_word_count(line_in, tgt);
   }
 
+  fin.close();
   return count;
 }
 
-int vector_word_count(string & source, string & substr)
+int substr_word_count(string & source, string & substr)
 {
   int count = 0;
   size_t pos = source.find(substr, 0);
